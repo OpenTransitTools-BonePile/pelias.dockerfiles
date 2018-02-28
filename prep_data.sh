@@ -16,10 +16,29 @@ fi
 docker-compose run -T --rm schema npm run create_index;
 
 # download all the data to be used by imports
-. ./who_date.sh
-if $UPDATE_WHO ; then
-  docker-compose run -T --rm whosonfirst npm run download &
+#. ./who_date.sh
+#if $UPDATE_WHO ; then
+  # docker-compose run -T --rm whosonfirst npm run download &
+#fi
+
+# download WOF sqlite databases
+# extract WOF data from sqlite databases
+docker-compose run --rm whosonfirst /bin/bash -s <<EOF &
+mkdir -p /data/whosonfirst
+rm -rf /data/whosonfirst/data /data/whosonfirst/meta
+if [ ! -f /data/whosonfirst/whosonfirst-data-latest.db ]; then
+  echo 'downloading whosonfirst-data-latest.db.bz2'
+  curl -s 'https://dist.whosonfirst.org/sqlite/whosonfirst-data-latest.db.bz2' |\
+    bzip2 -d > /data/whosonfirst/whosonfirst-data-latest.db &
 fi
+if [ ! -f /data/whosonfirst/whosonfirst-data-postalcode-us-latest.db ]; then
+  echo 'downloading whosonfirst-data-postalcode-us-latest.db.bz2'
+  curl -s 'https://dist.whosonfirst.org/sqlite/whosonfirst-data-postalcode-us-latest.db.bz2' |\
+    bzip2 -d > /data/whosonfirst/whosonfirst-data-postalcode-us-latest.db &
+fi
+wait
+node utils/sqlite_extract_data.js
+EOF
 
 docker-compose run -T --rm openaddresses npm run download &
 docker-compose run -T --rm openstreetmap npm run download &

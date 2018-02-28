@@ -134,7 +134,10 @@
       "importVenues": false,
       "importPostalcodes": true,
       "importPlace": "101715829",
-      "api_key": "<YOUR MAPZEN API KEY HERE>"
+      "sqlite_files": [
+        { "filename": "/data/whosonfirst/whosonfirst-data-latest.db" },
+        { "filename": "/data/whosonfirst/whosonfirst-data-postalcode-us-latest.db" }
+      ]
     },
     "interpolation": {
       "download": {

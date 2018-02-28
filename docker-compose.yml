@@ -45,7 +45,7 @@ services:
       - "${DATA_DIR}:/data"
   whosonfirst:
     depends_on: [ "baseimage" ]
-    image: pelias/whosonfirst
+    image: pelias/whosonfirst:region_extract_from_sqlite
     container_name: pelias_whosonfirst
     networks: [ "pelias" ]
     volumes:
